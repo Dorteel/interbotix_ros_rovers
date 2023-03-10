@@ -22,7 +22,7 @@
     <arg name="world_name"                        value="$(arg world_name)"/>
     <arg name="use_trajectory_controllers"        value="true"/>
   </include>
-
+<!-- 
   <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
@@ -32,7 +32,7 @@
     <arg name="use_camera"                        value="$(arg use_camera)"/>
     <arg name="mode_configs"                      value="$(arg mode_configs)"/>
     <arg name="dof"                               value="$(arg dof)"/>
-  </include>
+  </include> -->
 
   <include if="$(arg use_fake)" file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
