@@ -8,6 +8,7 @@
   <arg name="show_gripper_fingers"              default="true"/>
   <arg name="external_urdf_loc"                 default=""/>
   <arg name="load_gazebo_configs"               default="false"/>
+  <arg name="base_type"                         default="kobuki"/>
   <arg name="use_joint_pub"                     default="false"/>
   <arg name="use_joint_pub_gui"                 default="false"/>
   <arg name="rate"                              default="10"/>
