@@ -7,6 +7,7 @@
   <arg name="external_urdf_loc"                 default=""/>
   <arg name="use_rviz"                          default="false"/>
   <arg name="rviz_frame"                        default="$(arg robot_name)/base_footprint"/>
+  <arg name="base_type"                         default="$(optenv INTERBOTIX_XSLOCOBOT_BASE_TYPE create3)"/> <!-- 'kobuki', 'create3' -->
   <arg name="use_base"                          default="false"/>
   <arg name="use_dock"                          default="false"/>
   <arg name="use_lidar"                         default="false"/>
@@ -32,10 +33,12 @@
   <arg name="mode_configs" default="$(find interbotix_xslocobot_control)/config/modes_$(arg mode_type).yaml"/>
 
   <param name="$(arg robot_name)/use_base"      value="$(arg use_base)"/>
+  <param name="$(arg robot_name)/base_type"     value="$(arg base_type)"/>
 
   <include file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="base_type"                         value="$(arg base_type)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
     <arg name="show_gripper_bar"                  value="$(arg show_gripper_bar)"/>
     <arg name="show_gripper_fingers"              value="$(arg show_gripper_fingers)"/>
@@ -58,7 +61,7 @@
     <param name="load_configs"                    value="$(arg load_configs)"/>
   </node>
 
-  <group if="$(arg use_base)" ns="$(arg robot_name)">
+  <group if="$(eval arg('use_base') and arg('base_type') == 'kobuki')" ns="$(arg robot_name)">
     <node
       name="mobile_base_nodelet_manager"
       pkg="nodelet"
@@ -85,9 +88,9 @@
     </node>
 
     <node if="$(arg use_dock)"
-      pkg="nodelet" 
-      type="nodelet" 
-      name="dock_drive" 
+      pkg="nodelet"
+      type="nodelet"
+      name="dock_drive"
       args="load kobuki_auto_docking/AutoDockingNodelet mobile_base_nodelet_manager">
       <rosparam command="load"                      file="$(find kobuki_auto_docking)/param/auto_docking.yaml" />
       <remap from="dock_drive/odom"                 to="mobile_base/odom" />
@@ -95,6 +98,23 @@
       <remap from="dock_drive/dock_ir"              to="mobile_base/sensors/dock_ir" />
       <remap from="dock_drive/motor_power"          to="mobile_base/commands/motor_power" />
       <remap from="dock_drive/velocity"             to="mobile_base/commands/velocity" />
+    </node>
+  </group>
+
+  <group if="$(eval arg('use_base') and arg('base_type') == 'create3')">
+    <rosparam command="load" file="$(find interbotix_xslocobot_control)/config/bridge.yaml" />
+    <node
+      name="parameter_bridge"
+      pkg="interbotix_xslocobot_control"
+      type="startup_bridge.sh" />
+    <node
+      name="tf_rebroadcaster"
+      pkg="interbotix_tf_tools"
+      type="tf_rebroadcaster"
+      output="screen">
+      <param name="topic_to"                value="/tf"/>
+      <param name="topic_from"              value="/mobile_base/tf"/>
+      <param name="filepath_config"         value="$(find interbotix_xslocobot_control)/config/tf_rebroadcaster.yaml"/>
     </node>
   </group>
 
