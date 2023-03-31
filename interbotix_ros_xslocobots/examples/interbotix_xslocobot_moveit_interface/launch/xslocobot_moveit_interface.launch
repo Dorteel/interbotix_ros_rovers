@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="robot_model"                       default=""/>
+  <arg name="robot_model"                       default="locobot_wx250s"/>
   <arg name="robot_name"                        default="locobot"/>
   <arg name="show_lidar"                        default="false"/>
   <arg name="external_urdf_loc"                 default=""/>
